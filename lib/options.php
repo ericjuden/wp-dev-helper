@@ -74,19 +74,19 @@ class WDH_Options {
 	 * Variable to hold options array
 	 * @var array
 	 */
-	var $options;
+	public $options;
 	
 	/**
 	 * option_name in options db table
 	 * @var string
 	 */
-	var $option_name;
+	public $option_name;
 	
 	/**
 	 * Is this a site option (used for Multisite)
 	 * @var bool
 	 */
-	var $is_site_option;    // Are we using Multisite and saving to global options?
+	public $is_site_option;    // Are we using Multisite and saving to global options?
 
 	/**
 	 * Constructor
@@ -94,15 +94,21 @@ class WDH_Options {
 	 * @param bool $is_site_options = false
 	 */
 	function __construct($option_name, $is_site_options = false){
-		$this->option_name = $option_name;
+	    $this->option_name = $option_name;
 		$this->is_site_option = $is_site_options;
 		if($this->is_site_option){
-			$this->options = get_site_option($this->option_name);
+			$this->options = get_site_option($this->option_name, false);
 		} else {
-			$this->options = get_option($this->option_name);
+			$this->options = get_option($this->option_name, false);
 		}
+
 		if(!is_array($this->options)){
 			$this->options = array();
+			if($this->is_site_option){
+			    add_site_option($this->option_name, $this->options);
+			} else {
+			    add_option($this->option_name, $this->options);
+			}
 		}
 	}
 

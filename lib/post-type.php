@@ -5,21 +5,9 @@ require_once(WDH_LIB_DIR . '/list-table.php');
 class WDH_Post_Type {
     public $post_type = '';
     public $list_columns = array();
+    public $labels = array();
     
-    function __construct($post_type, $args = array()){
-        $this->post_type = $post_type;
-        
-        $defaults = array(
-            'capability_type' => $this->post_type,
-            'public' => true,
-        	'register_meta_box_cb' => array(&$this, 'metabox_register'),
-			'rewrite' => array('slug' => 'counselors', 'with_front' => true),
-        );
-        
-        $r = wp_parse_args($args, $defaults);
-        
-        register_post_type($this->post_type, $r);
-        
+    function __construct(){
         add_action('init', array(&$this, '_init'));
 		add_action('manage_' . $this->post_type . '_posts_custom_column', array(&$this, 'manage_custom_columns'));
 		add_action('request', array(&$this, 'request'), 1);
@@ -197,6 +185,7 @@ class WDH_Post_Type {
 	
 	function metabox_register(){
 		// Override in child class
+		add_meta_box($this->post_type, $this->labels['singular_name'] . ' ' . __('Information'), array($this, 'metabox_info'), $this->post_type, 'normal', 'high');
 	}
 	
 	function metabox_save(){
