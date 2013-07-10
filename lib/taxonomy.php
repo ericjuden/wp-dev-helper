@@ -2,17 +2,22 @@
 
 class WDH_Taxonomy {
 	public $taxonomy = '';
+	public $labels = array();
+	public $post_types = array();
+	public $args = array();
 	
 	function __construct($taxonomy, $post_types, $args = array()){
 	    $this->taxonomy = $taxonomy;
+		$this->post_types = $post_types;
 	    
 	    $defaults = array(
 	        'show_admin_column' => true
 	    );
 	    
 	    $r = wp_parse_args($args, $defaults);
-	    
-	    register_taxonomy($this->taxonomy, $post_types, $r);
+		$this->args = $r;
+		
+		add_action('init', array($this, 'init'));
 	}
 	
 	function create($term){
@@ -41,6 +46,10 @@ class WDH_Taxonomy {
 	
 	function get_multi($args = ''){
 		return get_terms(array($this->taxonomy), $args);
+	}
+	
+	function init(){
+		register_taxonomy($this->taxonomy, $this->post_types, $this->args);
 	}
 	
 	function list_terms($post_id, $separator = ', '){
