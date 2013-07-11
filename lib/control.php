@@ -12,6 +12,7 @@ class WDH_Control {
 	public $type = 'text';
 	public $class = '';
 	public $value = '';
+	public $extra_attributes = array();
 	public $capability = 'edit_theme_options';
 	
 	function __construct($manager, $id, $args = array()){
@@ -60,17 +61,33 @@ class WDH_Control {
 	 * @return void
 	 */
 	function render_content($args){	
-		switch($this->type){
-			case 'text':
-				?>
-				<input type="text" name="<?php echo $this->get_control_name(); ?>" id="<?php echo $this->id; ?>" value="<?php echo esc_attr($this->value); ?>"<?php $this->render_class(); ?> />
-				<?php 
-				break;
-				
+		switch($this->type){				
 			case 'checkbox':
 				?>
-				<input type="checkbox" name="<?php echo $this->get_control_name(); ?>" id="<?php echo $this->id; ?>" value="<?php echo esc_attr($this->value); ?>" <?php checked($this->value); ?> />
+				<input type="checkbox" name="<?php echo $this->get_control_name(); ?>" id="<?php echo $this->id; ?>" value="<?php echo esc_attr($this->value); ?>" <?php checked($this->value); ?><?php $this->add_extra_attributes(); ?> />
 				<?php
+				break;
+				
+			case 'date':
+				?>
+				<input type="date" name="<?php echo $this->get_control_name(); ?>" id="<?php echo $this->id; ?>" value="<?php echo esc_attr($this->value); ?>"<?php $this->render_class(); ?><?php echo $this->add_extra_attributes(); ?> />
+				<?php
+				break;
+				
+			case 'datetime':
+				?>
+				<input type="datetime" name="<?php echo $this->get_control_name(); ?>" id="<?php echo $this->id; ?>" value="<?php echo esc_attr($this->value); ?>"<?php $this->render_class(); ?><?php echo $this->add_extra_attributes(); ?> />
+				<?php
+				break;
+				
+			case 'time':
+				?>
+				<input type="time" name="<?php echo $this->get_control_name(); ?>" id="<?php echo $this->id; ?>" value="<?php echo esc_attr($this->value); ?>"<?php $this->render_class(); ?><?php echo $this->add_extra_attributes(); ?> />
+				<?php
+				break;
+				
+			case 'editor':
+				wp_editor($this->value, $this->id);
 				break;
 				
 			case 'radio':
@@ -81,7 +98,7 @@ class WDH_Control {
 				foreach($this->choices as $value => $label){
 				?>
 					<label>
-						<input type="radio" name="<?php echo $this->get_control_name(); ?>" <?php checked($this->value, $value); ?> />
+						<input type="radio" name="<?php echo $this->get_control_name(); ?>" <?php checked($this->value, $value); ?><?php echo $this->add_extra_attributes(); ?> />
 						<?php echo esc_html($label); ?><br />
 					</label>
 				<?php
@@ -94,7 +111,7 @@ class WDH_Control {
 				}
 				?>
 				<label>
-					<select name="<?php echo $this->get_control_name(); ?>" id="<?php echo $this->id; ?>">
+					<select name="<?php echo $this->get_control_name(); ?>" id="<?php echo $this->id; ?>"<?php echo $this->add_extra_attributes(); ?>>
 					<?php foreach($this->choices as $value => $label){ ?>
 						<option value="<?php echo esc_attr($value); ?>" <?php selected($this->value, $value, true); ?>><?php echo esc_html($label); ?></option>
 					<?php } ?>
@@ -102,7 +119,35 @@ class WDH_Control {
 				</label>
 				<?php 
 				break;
+				
+			case 'textarea':
+			?>
+				<textarea name="<?php echo $this->get_control_name(); ?>" id="<?php echo $this->id; ?>"<?php echo $this->add_extra_attributes(); ?>><?php echo esc_html($this->value); ?></textarea>
+			<?php
+				break;
+				
+			case 'text':
+			default:
+				?>
+				<input type="text" name="<?php echo $this->get_control_name(); ?>" id="<?php echo $this->id; ?>" value="<?php echo esc_attr($this->value); ?>"<?php $this->render_class(); ?><?php echo $this->add_extra_attributes(); ?> />
+				<?php 
+				break;
 		}
+	}
+
+	/**
+	 * Adds extra html attributes to an element
+	 * @return string
+	 */
+	function add_extra_attributes(){
+		$extra = '';
+		if(!empty($this->extra_attributes)){
+			foreach($this->extra_attributes as $key=>$value){
+				$extra .= ' ' . $key . '="' . $value . '"';
+			}
+		}
+		
+		return $extra;
 	}
 	
 	/**
