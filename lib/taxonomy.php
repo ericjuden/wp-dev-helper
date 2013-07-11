@@ -6,8 +6,7 @@ class WDH_Taxonomy {
 	public $post_types = array();
 	public $args = array();
 	
-	function __construct($taxonomy, $post_types, $args = array()){
-	    $this->taxonomy = $taxonomy;
+	function __construct($post_types, $args = array()){
 		$this->post_types = $post_types;
 	    
 	    $defaults = array(
