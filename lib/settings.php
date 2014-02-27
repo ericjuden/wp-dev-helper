@@ -97,7 +97,11 @@ class WDH_Settings_Manager {
 	 * @param array $args Tab arguments
 	 */
 	function add_control($id, $args = array()){
-		$this->controls[$id] = new WDH_Control($this, $id, $args);
+		if(is_a( $id, 'WDH_Control' )){
+			$this->controls[$id->id] = $id;
+		} else {
+			$this->controls[$id] = new WDH_Control($this, $id, $args);
+		}
 	}
 	
 	/**
