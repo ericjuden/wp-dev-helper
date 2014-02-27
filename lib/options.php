@@ -101,13 +101,19 @@ class WDH_Options {
 		} else {
 			$this->options = get_option($this->option_name, false);
 		}
+		
+		// Check if options are JSON
+		$temp_options = json_decode($this->options);
+		if(json_last_error() == JSON_ERROR_NONE && !empty($temp_options)){
+			$this->options = $temp_options;
+		}
 
 		if(!is_array($this->options)){
 			$this->options = array();
 			if($this->is_site_option){
-			    add_site_option($this->option_name, $this->options);
+			    add_site_option($this->option_name, json_encode($this->options));
 			} else {
-			    add_option($this->option_name, $this->options);
+			    add_option($this->option_name, json_encode($this->options));
 			}
 		}
 	}
@@ -154,9 +160,9 @@ class WDH_Options {
 	 */
 	function save(){
 		if($this->is_site_option){
-			update_site_option($this->option_name, $this->options);
+			update_site_option($this->option_name, json_encode($this->options));
 		} else {
-			update_option($this->option_name, $this->options);
+			update_option($this->option_name, json_encode($this->options));
 		}
 	}
 }
