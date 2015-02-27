@@ -12,6 +12,8 @@ require_once(WDH_LIB_DIR . '/settings.php');
 require_once(WDH_LIB_DIR . '/options.php');
 require_once(WDH_LIB_DIR . '/post-type.php');
 require_once(WDH_LIB_DIR . '/taxonomy.php');
+require_once(WDH_LIB_DIR . '/db-table.php');
+require_once(WDH_LIB_DIR . '/list-table.php');
 
 /**
  * Base plugin to inherit froms
@@ -24,6 +26,7 @@ class WDH_Plugin {
     var $plugin_name = 'Plugin';
 	var $options;
 	var $settings_manager;
+	var $tables = array();
 	
 	/**
 	 * Constructor
@@ -44,8 +47,67 @@ class WDH_Plugin {
 		if($this->is_network){
 		    add_action('network_admin_edit_' . $this->options->option_name, array($this, 'save_network_options'));
 		}
+
+		if(!empty($this->tables)){
+			if(!isset($this->options->created_tables)){
+				$this->create_tables();
+
+				$this->options->created_tables = true;
+				$this->options->save();
+			}
+		}
 	}
-	
+
+	function create_tables(){
+		global $wpdb;
+
+		require_once(ABSPATH . 'wp-admin/includes/upgrade.php');
+
+		foreach($this->tables as $table){
+			$table_name = $wpdb->prefix . $table->name;
+			if($wpdb->get_var("SHOW TABLES LIKE '$table_name'") != $table_name){    // Does table already exist
+
+				$sql = "CREATE TABLE " . $table_name . "(";
+
+				$i = 1;
+				$column_count = count($table->columns);
+				foreach($table->columns as $column){
+					$sql .= $column->name . " " . $column->data_type;    // example: column_name VARCHAR(100)
+					if($column->options != ''){
+						$sql .= " " . $column->options;                        // example: NOT NULL
+					}
+					if($column->auto_increment){
+						$sql .= " AUTO_INCREMENT";
+					}
+
+					if($i <= $column_count && !empty($table->keys)){
+						$sql .= ",";
+					}
+
+					$i++;
+				}
+
+				$i = 1;
+				$key_count = count($table->keys);
+				foreach($table->keys as $key){
+					if($key->is_primary){
+						$sql .= "PRIMARY KEY (" . $key->columns . ")";
+					} elseif($key->is_unique){
+						$sql .= "UNIQUE KEY " . $key->name . " (" . $key->columns . ")";
+					}
+					if($i < $key_count){
+						$sql .= ",";
+					}
+
+					$i++;
+				}
+				$sql .= ");";
+
+				$wpdb->query($sql);
+			}
+		}
+	}
+
     function add_settings_data(){	
 		$this->settings_manager->prepare();
 		

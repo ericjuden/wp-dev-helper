@@ -10,7 +10,11 @@ class WDH_Taxonomy {
 		$this->post_types = $post_types;
 	    
 	    $defaults = array(
-	        'show_admin_column' => true
+	    	'labels' => $this->labels,
+	    	'public' => true,
+	    	'show_ui' => true,
+	        'show_admin_column' => true,
+	        'hierarchical' => true,
 	    );
 	    
 	    $r = wp_parse_args($args, $defaults);
