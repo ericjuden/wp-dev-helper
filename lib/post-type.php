@@ -20,7 +20,10 @@ class WDH_Post_Type {
     function _init(){ 
 	    // Setup initial columns
 	    $this->list_columns['cb'] = new WDH_List_Table_Column('cb', '<input type="checkbox" />', false, 10);
-	    $this->list_columns['title'] = new WDH_List_Table_Column('title', __('Title'), true, 20);
+	    
+	    if(post_type_supports($this->post_type, 'title')){
+	    	$this->list_columns['title'] = new WDH_List_Table_Column('title', __('Title'), true, 20);
+	    }
 	    
 	    if(post_type_supports($this->post_type, 'author')){
 	        $this->list_columns['author'] = new WDH_List_Table_Column('author', __('Author'), true, 30);
