@@ -107,7 +107,7 @@ class WDH_Post_Type {
 	    $sql = "SELECT * FROM $wpdb->posts WHERE post_name = '$slug' LIMIT 1";
 	    $_post = $wpdb->get_row($wpdb->prepare($sql));
 	    if (!$_post){
-		    return $null;
+		    return null;
 	    }
 	    
 	    if ($filter != 'raw'){
@@ -155,16 +155,23 @@ class WDH_Post_Type {
 	 * Retrieve multiple posts by a term id associated with them
 	 *
 	 * @param int $term_id
+	 * @param array $args
 	 */
 	function get_multi_by_term($term_id, $args = array()){
 	    global $wpdb;
 	    $defaults = array(
 	        'order_by' => 'post_title',
-	        'order' => 'ASC'
+	        'order' => 'ASC',
+			'show_private' => false,
 	    );
 	    $atts = wp_parse_args($args, $defaults);
 	    
-	    $sql = "SELECT DISTINCT p.* FROM $wpdb->posts p INNER JOIN $wpdb->term_relationships tr ON tr.object_id = p.ID INNER JOIN $wpdb->term_taxonomy tt ON tt.term_taxonomy_id = tr.term_taxonomy_id INNER JOIN $wpdb->terms t ON t.term_id = tt.term_id WHERE p.post_type = '$this->post_type' AND p.post_status IN ('publish') AND t.term_id = $term_id ORDER BY ". $atts['order_by'] . " " . $atts['order'];
+	    $statuses = "'publish'";
+		if($atts['show_private']){
+			$statuses .= ", 'private'";
+		}
+
+	    $sql = "SELECT DISTINCT p.* FROM $wpdb->posts p INNER JOIN $wpdb->term_relationships tr ON tr.object_id = p.ID INNER JOIN $wpdb->term_taxonomy tt ON tt.term_taxonomy_id = tr.term_taxonomy_id INNER JOIN $wpdb->terms t ON t.term_id = tt.term_id WHERE p.post_type = '$this->post_type' AND p.post_status IN ($statuses) AND t.term_id = $term_id ORDER BY ". $atts['order_by'] . " " . $atts['order'];
 		return $wpdb->get_results($sql, OBJECT);
 	}
 	
