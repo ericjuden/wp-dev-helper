@@ -8,13 +8,13 @@ class WDH_Post_Type {
     public $labels = array();
     
     function __construct(){
-        add_action('init', array(&$this, '_init'));
-		add_action('manage_' . $this->post_type . '_posts_custom_column', array(&$this, 'manage_custom_columns'));
-		add_action('request', array(&$this, 'request'), 1);
-		add_action('restrict_manage_posts', array(&$this, 'restrict_manage_posts'));
-		add_action('save_post', array(&$this, 'metabox_save'));
-		add_filter('manage_edit-' . $this->post_type . '_columns', array(&$this, 'edit_columns'));
-		add_filter('manage_edit-' . $this->post_type . '_sortable_columns', array(&$this, 'sortable_columns'));
+        add_action('init', array($this, '_init'));
+		add_action('manage_' . $this->post_type . '_posts_custom_column', array($this, 'manage_custom_columns'));
+		add_action('request', array($this, 'request'), 1);
+		add_action('restrict_manage_posts', array($this, 'restrict_manage_posts'));
+		add_action('save_post', array($this, 'metabox_save'));
+		add_filter('manage_edit-' . $this->post_type . '_columns', array($this, 'edit_columns'));
+		add_filter('manage_edit-' . $this->post_type . '_sortable_columns', array($this, 'sortable_columns'));
     }    
     
     function _init(){ 
@@ -44,7 +44,7 @@ class WDH_Post_Type {
 	 */
     function build_columns(){	    
 	    // Sort by display_order
-	    usort($this->list_columns, array(&$this, 'usort_reorder'));
+	    usort($this->list_columns, array($this, 'usort_reorder'));
 	}
 	
 	/**
