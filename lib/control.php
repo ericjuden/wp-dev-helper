@@ -161,8 +161,12 @@ class WDH_Control {
 		return apply_filters('wdh_control_sanitize', $output, $input, $this);
 	}
 	
+	/**
+	 * Get the class property for the control
+	 * @return string
+	 */
 	function get_class(){
-		$this->class = apply_filters('wdh_control_class', $this->id, $this->class);
+		return apply_filters('wdh_control_class', $this->class, $this->id);
 	}
 }
 ?>
