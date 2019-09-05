@@ -116,7 +116,7 @@ class WDH_Plugin {
 				// Add Settings Sections
 				foreach($tab->sections as $section){
 					add_settings_section($section->id, $section->title, array($section, 'maybe_render'), $this->options->option_name . '_' . $tab->id);
-					
+
 					// Add controls
 					foreach($section->controls as $control){
 						add_settings_field($control->id, $control->title, array($control, 'render_content'), $this->options->option_name . '_' . $tab->id, $section->id, array());
@@ -124,12 +124,14 @@ class WDH_Plugin {
 				}
 				
 				// Register setting for the current tab
-				register_setting($this->options->option_name . '_' . $tab->id, $this->options->option_name . '_' . $tab->id);//, array($tab, 'sanitize_options'));
+				if(isset($this->options) && isset($this->options->option_name) && $this->options->option_name != '') {
+					register_setting($this->options->option_name . '_' . $tab->id, $this->options->option_name . '_' . $tab->id);//, array($tab, 'sanitize_options'));
+				}
 			}
 		} else {
 			foreach($this->settings_manager->sections as $section){
 				add_settings_section($section->id, $section->title, array($section, 'maybe_render'), $this->options->option_name);
-				
+
 				// Add controls
 				foreach($section->controls as $control){
 					add_settings_field($control->id, $control->title, array($control, 'render_content'), $this->options->option_name, $section->id, array());
@@ -137,7 +139,9 @@ class WDH_Plugin {
 			}
 			
 			// Register setting for page
-			register_setting($this->options->option_name, $this->options->option_name);
+			if(isset($this->options) && isset($this->options->option_name) && $this->options->option_name != ''){
+				register_setting($this->options->option_name, $this->options->option_name);
+			}
 		}
 	}
 	
