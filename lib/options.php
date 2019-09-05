@@ -30,8 +30,9 @@ class WDH_Options_Manager {
 	 */
 	public $options = array();
 	
-	function __construct($option_name){
+	function __construct($option_name, $settings_manager){
 		$this->option_name = $option_name;
+		$this->settings_manager = $settings_manager;
 	}
 	
 	/**
@@ -103,7 +104,7 @@ class WDH_Options {
 		}
 		
 		// Check if options are JSON
-		$temp_options = json_decode($this->options);
+		$temp_options = json_decode($this->options, true);
 		if(json_last_error() == JSON_ERROR_NONE && !empty($temp_options)){
 			$this->options = $temp_options;
 		}
