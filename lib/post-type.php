@@ -20,10 +20,10 @@ class WDH_Post_Type {
     function _init(){ 
 	    // Setup initial columns
 	    $this->list_columns['cb'] = new WDH_List_Table_Column('cb', '<input type="checkbox" />', false, 10);
-	    
-	    if(post_type_supports($this->post_type, 'title')){
+
+		if(post_type_supports($this->post_type, 'title')){
 	    	$this->list_columns['title'] = new WDH_List_Table_Column('title', __('Title'), true, 20);
-	    }
+	 	}
 	    
 	    if(post_type_supports($this->post_type, 'author')){
 	        $this->list_columns['author'] = new WDH_List_Table_Column('author', __('Author'), true, 30);
@@ -165,8 +165,8 @@ class WDH_Post_Type {
 			'show_private' => false,
 	    );
 	    $atts = wp_parse_args($args, $defaults);
-	    
-	    $statuses = "'publish'";
+
+		$statuses = "'publish'";
 		if($atts['show_private']){
 			$statuses .= ", 'private'";
 		}
@@ -232,15 +232,15 @@ class WDH_Post_Type {
 	 */
 	function restrict_manage_posts(){
 	    global $typenow;
-	    
+
 	    // Make sure we are working with the correct post type
 	    if($typenow == $this->post_type){
 	        // Retrieve taxonomies of this post type
 	        $taxonomies = get_object_taxonomies($this->post_type, 'objects');
-	        
+
 	        foreach($taxonomies as $tax){
     	        $tax_name = $tax->labels->name;
-    	        $objs = get_terms(array($tax->name));
+    	        $objs = get_terms(array('taxonomy' => $tax->name));
     	        if(count($objs) > 0){
         	        echo '<select name="'. $tax->name .'" id="'. $tax->name .'" class="postform">';
         	        echo '<option value="">'. _('Show All') . ' ' . $tax_name . '</option>';
